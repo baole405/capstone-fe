@@ -11,12 +11,10 @@
 This repository demonstrates a production-ready React monorepo with:
 
 - **2 Applications**
-
   - `shop` - React e-commerce application with product listings and detail views
   - `api` - Backend API serving product data
 
 - **7 Libraries**
-
   - `@org/shop-feature-products` - Product listing feature (React)
   - `@org/shop-feature-product-detail` - Product detail feature (React)
   - `@org/shop-data` - Data access layer for shop features
@@ -136,6 +134,67 @@ This feature helps maintain a healthy CI pipeline by automatically detecting and
 - Common build failures
 
 [Learn more about self-healing CI →](https://nx.dev/ci/features/self-healing-ci)
+
+### 5. 🔐 Leaking Detector (GitHub Actions)
+
+This repository includes a `leaking-detector` job in `.github/workflows/commitlint.yml`.
+
+- Triggers:
+  - `pull_request`
+  - `push` on `main` and `dev`
+- Scanner:
+  - [Gitleaks](https://github.com/gitleaks/gitleaks) scans git history and generates a SARIF report.
+- Reporting:
+  - SARIF is uploaded with `github/codeql-action/upload-sarif` so findings are visible in GitHub Security.
+- Failure behavior:
+  - The workflow fails when a leak is detected.
+
+Secrets required for this workflow:
+
+- None. Do not hardcode credentials in the repository.
+
+If this check fails:
+
+- Remove or rotate the leaked credential.
+- Clean up git history if needed.
+- Re-run CI and verify the `leaking-detector` check is green.
+
+### 6. ✅ Commitlint (GitHub Actions)
+
+This repository uses the `commitlint` job in `.github/workflows/commitlint.yml`.
+
+- Triggers:
+  - `pull_request`
+  - `push` on `main` and `dev`
+- Validator:
+  - `wagoid/commitlint-github-action`
+- Rules source:
+  - `commitlint.config.mjs`
+- Job order:
+  - `leaking-detector` runs first
+  - `commitlint` runs after `leaking-detector`
+
+Failure behavior:
+
+- The workflow fails if commit messages do not follow Conventional Commits.
+
+If this check fails:
+
+- Rewrite commit messages to match the convention and push again.
+- For local rewrite, use `git commit --amend` (latest commit) or interactive rebase for older commits.
+
+### Commit Message Convention
+
+Use Conventional Commits, for example:
+
+- `feat(shop): add product filter`
+- `fix(api): handle missing product id`
+- `chore(ci): add commitlint workflow`
+
+Invalid examples:
+
+- `update stuff`
+- `fix bug`
 
 ## 📁 Project Structure
 
