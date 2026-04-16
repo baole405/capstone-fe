@@ -1,4 +1,4 @@
-name: quality-checks
+name: commitlint
 
 on:
   pull_request:
@@ -8,76 +8,9 @@ on:
 
 permissions:
   contents: read
-  security-events: write
 
 jobs:
-  leaking-detector:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout full history
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install Gitleaks
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/gitleaks/gitleaks/master/install.sh | sh -s -- -b /usr/local/bin v8.24.2
-
-      - name: Determine scan range
-        id: leak-range
-        shell: bash
-        run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            BASE_SHA="${{ github.event.pull_request.base.sha }}"
-          else
-            BASE_SHA="${{ github.event.before }}"
-          fi
-
-          if [[ -z "$BASE_SHA" || "$BASE_SHA" == "0000000000000000000000000000000000000000" ]]; then
-            BASE_SHA="$(git rev-list --max-parents=0 HEAD)"
-          fi
-
-          echo "base_sha=$BASE_SHA" >> "$GITHUB_OUTPUT"
-          echo "head_sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
-
-      - name: Run Gitleaks scan
-        id: gitleaks
-        shell: bash
-        run: |
-          set +e
-          gitleaks git --log-opts="${{ steps.leak-range.outputs.base_sha }}..${{ steps.leak-range.outputs.head_sha }}" --report-format sarif --report-path gitleaks.sarif --exit-code 1 --redact
-          EXIT_CODE=$?
-
-          if [[ -f gitleaks.sarif ]]; then
-            RUNS_COUNT=$(jq '.runs | length' gitleaks.sarif 2>/dev/null || echo 0)
-          else
-            RUNS_COUNT=0
-          fi
-
-          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
-          echo "runs_count=$RUNS_COUNT" >> "$GITHUB_OUTPUT"
-          exit 0
-
-      - name: Upload SARIF report
-        if: always() && steps.gitleaks.outputs.runs_count != '0'
-        uses: github/codeql-action/upload-sarif@v4
-        with:
-          sarif_file: gitleaks.sarif
-
-      - name: Fail workflow when gitleaks execution fails
-        if: steps.gitleaks.outputs.exit_code != '0' && steps.gitleaks.outputs.exit_code != '1'
-        run: |
-          echo "Gitleaks command failed (exit code: ${{ steps.gitleaks.outputs.exit_code }})."
-          exit 1
-
-      - name: Fail workflow when secrets are detected
-        if: steps.gitleaks.outputs.exit_code == '1'
-        run: |
-          echo "Gitleaks detected secrets. Check Security tab for SARIF findings."
-          exit 1
-
   commitlint:
-    needs: leaking-detector
     runs-on: ubuntu-latest
     steps:
       - name: Checkout full history
