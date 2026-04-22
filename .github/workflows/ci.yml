@@ -2,41 +2,50 @@ name: CI
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
 
 permissions:
-  actions: read
   contents: read
 
-jobs:
-  main:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          filter: tree:0
-          fetch-depth: 0
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-      - uses: pnpm/action-setup@v4
-        name: Install pnpm
+jobs:
+  verify:
+    name: Verify (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          version: 9.8.0
+          version: 10.15.1
           run_install: false
 
-      # Uncomment to distribute tasks across multiple CI machines with Nx Agents.
-      # - run: pnpm dlx nx start-ci-run --distribute-on="3 linux-medium-js"
-
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: "pnpm"
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
 
-      - run: pnpm install --frozen-lockfile
-      - uses: nrwl/nx-set-shas@v4
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - run: pnpm exec nx affected -t lint test build
+      - name: Lint
+        run: pnpm lint
 
-      - run: pnpm exec nx fix-ci
-        if: always()
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
