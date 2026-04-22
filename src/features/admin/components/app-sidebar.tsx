@@ -21,9 +21,14 @@ import {
 
 import { LogoutButton } from "@/features/auth/components/logout-button";
 
-import { adminRootItem, adminSections } from "../config/admin-sections";
+import type { AdminNavItem, AdminSection } from "../types/admin-content";
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  navRoot: AdminNavItem;
+  sections: AdminSection[];
+};
+
+export function AppSidebar({ navRoot, sections }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -54,12 +59,12 @@ export function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  isActive={pathname === adminRootItem.href}
-                  tooltip={adminRootItem.label}
+                  isActive={pathname === navRoot.href}
+                  tooltip={navRoot.label}
                   render={
-                    <Link href={adminRootItem.href as Route}>
-                      <adminRootItem.icon />
-                      <span>{adminRootItem.label}</span>
+                    <Link href={navRoot.href as Route}>
+                      <navRoot.icon />
+                      <span>{navRoot.label}</span>
                     </Link>
                   }
                 />
@@ -72,7 +77,7 @@ export function AppSidebar() {
           <SidebarGroupLabel>Admin modules</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {adminSections.map((section) => {
+              {sections.map((section) => {
                 const href = `/admin/${section.slug}` as Route;
 
                 return (

@@ -18,13 +18,19 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 
 import { useSession } from "@/features/auth/hooks/use-session";
 
-import { getAdminSectionBySlug } from "../config/admin-sections";
+import type { AdminSection } from "../types/admin-content";
 
-export function AdminHeader() {
+type AdminHeaderProps = {
+  sections: AdminSection[];
+};
+
+export function AdminHeader({ sections }: AdminHeaderProps) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   const sessionQuery = useSession();
-  const activeSection = segments[1] ? getAdminSectionBySlug(segments[1]) : null;
+  const activeSection = segments[1]
+    ? (sections.find((section) => section.slug === segments[1]) ?? null)
+    : null;
   const initials =
     sessionQuery.data?.name
       ?.split(" ")

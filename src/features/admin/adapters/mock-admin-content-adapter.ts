@@ -1,4 +1,3 @@
-import type { LucideIcon } from "lucide-react";
 import {
   BadgePercentIcon,
   BoxesIcon,
@@ -13,17 +12,13 @@ import {
   WrenchIcon,
 } from "lucide-react";
 
-export type AdminSection = {
-  slug: string;
-  title: string;
-  summary: string;
-  priority: "P0" | "P1" | "P2";
-  icon: LucideIcon;
-  outcomes: string[];
-  blockers: string[];
-};
+import type {
+  AdminDashboardViewModel,
+  AdminSection,
+  AdminSectionViewModel,
+} from "../types/admin-content";
 
-export const adminSections: AdminSection[] = [
+const sections: AdminSection[] = [
   {
     slug: "users",
     title: "User accounts",
@@ -181,37 +176,62 @@ export const adminSections: AdminSection[] = [
   },
 ];
 
-export const dashboardHighlights = [
-  {
-    label: "Auth style",
-    value: "BFF session cookie",
-    detail: "Frontend never stores Keycloak tokens in browser storage.",
+const dashboardViewModel: AdminDashboardViewModel = {
+  hero: {
+    eyebrow: "Admin v1 scaffold",
+    title:
+      "The frontend is now organized around Next.js App Router, an adapter boundary, and module-first admin routing.",
+    description:
+      "This admin foundation is intentionally integration-friendly: the UI reads view models from a mock adapter today, so another owner can swap that adapter for OpenAPI-backed data later without rewriting the interface layer.",
   },
-  {
-    label: "Proxy boundary",
-    value: "/api/be/*",
-    detail: "Browser requests stay same-origin and forward to NestJS.",
+  highlights: [
+    {
+      label: "Auth style",
+      value: "BFF session cookie",
+      detail: "Frontend never stores Keycloak tokens in browser storage.",
+    },
+    {
+      label: "Integration seam",
+      value: "Adapter -> UI",
+      detail:
+        "Mock data lives behind an adapter boundary, ready for API replacement.",
+    },
+    {
+      label: "Admin scope",
+      value: "10 module shells",
+      detail: "Every priority area from the overview has a route placeholder.",
+    },
+  ],
+  sections,
+  backendQuestions: [
+    "Where will the canonical role model live: Keycloak claims or database tables?",
+    "Which auth document is still authoritative besides docs/auth.vi.md?",
+    "When will Swagger/OpenAPI cover the admin modules beyond auth?",
+    "What are the first stable schemas for products, inventory, orders, and reports?",
+  ],
+  navRoot: {
+    href: "/admin",
+    label: "Dashboard",
+    icon: LayoutDashboardIcon,
   },
-  {
-    label: "Admin scope",
-    value: "10 module shells",
-    detail: "Every priority area from the overview has a route placeholder.",
-  },
-];
+};
 
-export const backendQuestions = [
-  "Where will the canonical role model live: Keycloak claims or database tables?",
-  "Which auth document is still authoritative besides docs/auth.vi.md?",
-  "When will Swagger/OpenAPI cover the admin modules beyond auth?",
-  "What are the first stable schemas for products, inventory, orders, and reports?",
-];
-
-export function getAdminSectionBySlug(slug: string) {
-  return adminSections.find((section) => section.slug === slug);
+export async function getMockAdminDashboardViewModel() {
+  return dashboardViewModel;
 }
 
-export const adminRootItem = {
-  href: "/admin",
-  label: "Dashboard",
-  icon: LayoutDashboardIcon,
-};
+export async function getMockAdminSections() {
+  return sections;
+}
+
+export async function getMockAdminSectionViewModel(
+  slug: string,
+): Promise<AdminSectionViewModel | null> {
+  const section = sections.find((item) => item.slug === slug);
+
+  if (!section) {
+    return null;
+  }
+
+  return { section };
+}
