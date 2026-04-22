@@ -1,5 +1,3 @@
-packages:
-  - 'apps/*'
-  - 'libs/api/products'
-  - 'libs/shared/*'
-  - 'libs/shop/*'
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
