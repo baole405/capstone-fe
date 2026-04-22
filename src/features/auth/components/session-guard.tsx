@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ApiError } from "@/lib/api/client";
+import { appConfig } from "@/lib/env";
 
 import { AdminShellLoading } from "@/features/admin/components/admin-shell-loading";
 
@@ -21,6 +22,10 @@ export function SessionGuard({
   const sessionQuery = useSession();
 
   useEffect(() => {
+    if (appConfig.devBypassAuth) {
+      return;
+    }
+
     if (!(sessionQuery.error instanceof ApiError)) {
       return;
     }
@@ -32,6 +37,10 @@ export function SessionGuard({
       router.replace(loginTarget as Route);
     }
   }, [pathname, router, sessionQuery.error]);
+
+  if (appConfig.devBypassAuth) {
+    return <>{children}</>;
+  }
 
   if (sessionQuery.isLoading) {
     return <AdminShellLoading label="Restoring admin session..." />;

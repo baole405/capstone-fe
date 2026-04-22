@@ -3,32 +3,29 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { appConfig } from "@/lib/env";
 
-import {
-  adminSections,
-  backendQuestions,
-  dashboardHighlights,
-} from "../config/admin-sections";
+import type { AdminDashboardViewModel } from "../types/admin-content";
 
-export function DashboardOverview() {
+type DashboardOverviewProps = {
+  data: AdminDashboardViewModel;
+};
+
+export function DashboardOverview({ data }: DashboardOverviewProps) {
   return (
     <div className="space-y-6">
       <section className="grid gap-4 lg:grid-cols-[1.3fr_0.7fr]">
         <Card className="surface-glass overflow-hidden border-none">
           <div className="h-full bg-[linear-gradient(145deg,rgba(255,255,255,0.88),rgba(216,239,236,0.92))] p-6">
             <Badge variant="outline" className="mb-4">
-              Admin v1 scaffold
+              {data.hero.eyebrow}
             </Badge>
             <div className="space-y-4">
               <h1 className="max-w-3xl text-4xl leading-tight font-semibold">
-                The frontend is now organized around Next.js App Router, a BFF
-                auth proxy, and module-first admin routing.
+                {data.hero.title}
               </h1>
               <p className="text-muted-foreground max-w-3xl text-base">
-                This is intentionally not a marketing shell. It is a strict
-                admin foundation: authenticated entry, sidebar navigation,
-                placeholder modules, shared loading/error states, and a clean
-                boundary for future OpenAPI-generated clients.
+                {data.hero.description}
               </p>
             </div>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -38,6 +35,11 @@ export function DashboardOverview() {
               <Button variant="outline" render={<Link href="/login" />}>
                 Review auth entry
               </Button>
+              {appConfig.devBypassAuth ? (
+                <Badge className="bg-amber-100 text-amber-900 hover:bg-amber-100">
+                  Dev bypass auth enabled
+                </Badge>
+              ) : null}
             </div>
           </div>
         </Card>
@@ -47,7 +49,7 @@ export function DashboardOverview() {
             <CardTitle>Highlights</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {dashboardHighlights.map((item) => (
+            {data.highlights.map((item) => (
               <div
                 key={item.label}
                 className="border-border/70 rounded-2xl border p-4"
@@ -66,7 +68,7 @@ export function DashboardOverview() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {adminSections.map((section) => (
+        {data.sections.map((section) => (
           <Card key={section.slug} className="surface-glass">
             <CardHeader className="space-y-4">
               <div className="flex items-center justify-between gap-3">
@@ -104,7 +106,7 @@ export function DashboardOverview() {
         </CardHeader>
         <CardContent>
           <ul className="grid gap-3 md:grid-cols-2">
-            {backendQuestions.map((question) => (
+            {data.backendQuestions.map((question) => (
               <li
                 key={question}
                 className="border-border text-muted-foreground rounded-2xl border border-dashed p-4 text-sm"

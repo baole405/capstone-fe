@@ -1,13 +1,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import type { AdminSection } from "../config/admin-sections";
+import type { AdminSectionViewModel } from "../types/admin-content";
 
 type AdminSectionPageProps = {
-  section: AdminSection;
+  data: AdminSectionViewModel;
 };
 
-export function AdminSectionPage({ section }: AdminSectionPageProps) {
+export function AdminSectionPage({ data }: AdminSectionPageProps) {
+  const { section } = data;
+
   return (
     <div className="space-y-6">
       <section className="space-y-4 rounded-[2rem] border border-white/60 bg-white/85 p-6 shadow-sm backdrop-blur">

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { LoginPanel } from "@/features/auth/components/login-panel";
 import { sanitizeRedirectPath } from "@/features/auth/lib/safe-redirect";
+import { appConfig } from "@/lib/env";
 
 type LoginPageProps = {
   searchParams: Promise<{
@@ -11,6 +12,10 @@ type LoginPageProps = {
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
+  if (appConfig.devBypassAuth) {
+    redirect("/admin");
+  }
+
   const cookieStore = await cookies();
 
   if (cookieStore.has("sid")) {
