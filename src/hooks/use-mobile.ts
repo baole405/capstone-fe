@@ -2,17 +2,16 @@ import * as React from "react";
 
 const MOBILE_BREAKPOINT = 768;
 
-function subscribe(callback: () => void) {
-  const mediaQuery = window.matchMedia(
-    `(max-width: ${MOBILE_BREAKPOINT - 1}px)`,
-  );
-  mediaQuery.addEventListener("change", callback);
+const query = `(max-width: ${MOBILE_BREAKPOINT - 1}px)`;
 
-  return () => mediaQuery.removeEventListener("change", callback);
+function subscribe(callback: () => void) {
+  const mql = window.matchMedia(query);
+  mql.addEventListener("change", callback);
+  return () => mql.removeEventListener("change", callback);
 }
 
 function getSnapshot() {
-  return window.innerWidth < MOBILE_BREAKPOINT;
+  return window.matchMedia(query).matches;
 }
 
 function getServerSnapshot() {
