@@ -140,22 +140,21 @@ const chartConfig = {
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("90d");
-  const [hasUserSelected, setHasUserSelected] = React.useState(false);
 
-  const effectiveTimeRange = !hasUserSelected && isMobile ? "7d" : timeRange;
-
-  function handleTimeRangeChange(value: string) {
-    setHasUserSelected(true);
-    setTimeRange(value);
-  }
+  React.useEffect(() => {
+    if (isMobile) {
+      const timer = setTimeout(() => setTimeRange("7d"), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile]);
 
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date);
     const referenceDate = new Date("2024-06-30");
     let daysToSubtract = 90;
-    if (effectiveTimeRange === "30d") {
+    if (timeRange === "30d") {
       daysToSubtract = 30;
-    } else if (effectiveTimeRange === "7d") {
+    } else if (timeRange === "7d") {
       daysToSubtract = 7;
     }
     const startDate = new Date(referenceDate);
@@ -176,9 +175,9 @@ export function ChartAreaInteractive() {
         <CardAction>
           <ToggleGroup
             multiple={false}
-            value={effectiveTimeRange ? [effectiveTimeRange] : []}
+            value={timeRange ? [timeRange] : []}
             onValueChange={(value) => {
-              handleTimeRangeChange(value[0] ?? "90d");
+              setTimeRange(value[0] ?? "90d");
             }}
             variant="outline"
             className="hidden *:data-[slot=toggle-group-item]:px-4! @[767px]/card:flex"
@@ -188,10 +187,10 @@ export function ChartAreaInteractive() {
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
           </ToggleGroup>
           <Select
-            value={effectiveTimeRange}
+            value={timeRange}
             onValueChange={(value) => {
               if (value !== null) {
-                handleTimeRangeChange(value);
+                setTimeRange(value);
               }
             }}
           >

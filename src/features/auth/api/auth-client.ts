@@ -30,7 +30,7 @@ export async function getAuthStatus() {
 }
 
 export async function startLogin({
-  redirectTo = "/admin",
+  redirectTo = "/dashboard",
   idpHint,
 }: StartLoginInput = {}) {
   if (appConfig.devBypassAuth) {

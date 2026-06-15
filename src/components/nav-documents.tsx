@@ -22,6 +22,7 @@ import {
   ShareIcon,
   Trash2Icon,
 } from "lucide-react";
+import { vi } from "@/config/locales/vi";
 
 export function NavDocuments({
   items,
@@ -35,7 +36,7 @@ export function NavDocuments({
   const { isMobile } = useSidebar();
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Documents</SidebarGroupLabel>
+      <SidebarGroupLabel>{vi.sidebar.sections.documents}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
@@ -53,7 +54,7 @@ export function NavDocuments({
                 }
               >
                 <MoreHorizontalIcon />
-                <span className="sr-only">More</span>
+                <span className="sr-only">{vi.sidebar.actions.more}</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-24"
@@ -62,16 +63,16 @@ export function NavDocuments({
               >
                 <DropdownMenuItem>
                   <FolderIcon />
-                  <span>Open</span>
+                  <span>{vi.sidebar.actions.open}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <ShareIcon />
-                  <span>Share</span>
+                  <span>{vi.sidebar.actions.share}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive">
                   <Trash2Icon />
-                  <span>Delete</span>
+                  <span>{vi.sidebar.actions.delete}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -80,7 +81,7 @@ export function NavDocuments({
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
             <MoreHorizontalIcon className="text-sidebar-foreground/70" />
-            <span>More</span>
+            <span>{vi.sidebar.actions.more}</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

@@ -13,13 +13,13 @@ type LoginPageProps = {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   if (appConfig.devBypassAuth) {
-    redirect("/admin");
+    redirect("/dashboard");
   }
 
   const cookieStore = await cookies();
 
   if (cookieStore.has("sid")) {
-    redirect("/admin");
+    redirect("/dashboard");
   }
 
   const { redirectTo } = await searchParams;

@@ -21,9 +21,7 @@ export default function NotFoundPage() {
             module here, add it under the App Router tree in{" "}
             <code>src/app</code>.
           </p>
-          <Button render={<Link href="/admin" />}>
-            Back to admin dashboard
-          </Button>
+          <Button render={<Link href="/dashboard" />}>Back to dashboard</Button>
         </CardContent>
       </Card>
     </main>
