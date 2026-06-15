@@ -21,8 +21,6 @@ import {
   ChartBarIcon,
   FolderIcon,
   UsersIcon,
-  CameraIcon,
-  FileTextIcon,
   Settings2Icon,
   CircleHelpIcon,
   SearchIcon,
@@ -30,125 +28,57 @@ import {
   FileChartColumnIcon,
   FileIcon,
   CommandIcon,
+  LucideIcon,
 } from "lucide-react";
+import { vi } from "@/config/locales/vi";
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: <LayoutDashboardIcon />,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: <ListIcon />,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: <ChartBarIcon />,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: <FolderIcon />,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: <UsersIcon />,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: <CameraIcon />,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Proposal",
-      icon: <FileTextIcon />,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: <FileTextIcon />,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: <Settings2Icon />,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: <CircleHelpIcon />,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: <SearchIcon />,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: <DatabaseIcon />,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: <FileChartColumnIcon />,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: <FileIcon />,
-    },
-  ],
+// Icon Map to convert string names from Server Config to Client React Components
+const IconMap: Record<string, LucideIcon> = {
+  LayoutDashboard: LayoutDashboardIcon,
+  List: ListIcon,
+  ChartBar: ChartBarIcon,
+  Folder: FolderIcon,
+  Users: UsersIcon,
+  Settings2: Settings2Icon,
+  CircleHelp: CircleHelpIcon,
+  Search: SearchIcon,
+  Database: DatabaseIcon,
+  FileChartColumn: FileChartColumnIcon,
+  File: FileIcon,
 };
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+// Temporary static user for UI mock
+const MOCK_USER = {
+  name: "GlowScan Admin",
+  email: "admin@glowscan.com",
+  avatar: "/avatars/shadcn.jpg",
+};
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  config: {
+    navMain: { title: string; url: string; icon: string }[];
+    navSecondary: { title: string; url: string; icon: string }[];
+    documents: { name: string; url: string; icon: string }[];
+  };
+}
+
+export function AppSidebar({ config, ...props }: AppSidebarProps) {
+  // Map string icons to React Nodes
+  const mappedNavMain = config.navMain.map((item) => {
+    const Icon = IconMap[item.icon];
+    return { ...item, icon: Icon ? <Icon /> : undefined };
+  });
+
+  const mappedNavSecondary = config.navSecondary.map((item) => {
+    const Icon = IconMap[item.icon];
+    return { ...item, icon: Icon ? <Icon /> : undefined };
+  });
+
+  const mappedDocuments = config.documents.map((item) => {
+    const Icon = IconMap[item.icon];
+    return { ...item, icon: Icon ? <Icon /> : undefined };
+  });
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -159,18 +89,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               render={<a href="#" />}
             >
               <CommandIcon className="size-5!" />
-              <span className="text-base font-semibold">Acme Inc.</span>
+              <span className="text-base font-semibold">
+                {vi.sidebar.brand}
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavMain items={mappedNavMain} />
+        <NavDocuments items={mappedDocuments} />
+        <NavSecondary items={mappedNavSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={MOCK_USER} />
       </SidebarFooter>
     </Sidebar>
   );

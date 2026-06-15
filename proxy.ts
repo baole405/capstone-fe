@@ -10,17 +10,17 @@ export function proxy(request: NextRequest) {
 
   if (devBypassAuth) {
     if (pathname === "/login") {
-      return NextResponse.redirect(new URL("/admin", request.url));
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
     return NextResponse.next();
   }
 
   if (pathname === "/login" && hasSession) {
-    return NextResponse.redirect(new URL("/admin", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (pathname.startsWith("/admin") && !hasSession) {
+  if (pathname.startsWith("/dashboard") && !hasSession) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirectTo", `${pathname}${search}`);
 
@@ -31,5 +31,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/login"],
+  matcher: ["/dashboard/:path*", "/login"],
 };

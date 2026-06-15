@@ -134,7 +134,7 @@ export function LoginPanel({ redirectTo }: LoginPanelProps) {
               Need a safe fallback route?{" "}
               <button
                 className="text-primary font-medium underline-offset-4 hover:underline"
-                onClick={() => router.replace("/login?redirectTo=/admin")}
+                onClick={() => router.replace("/login?redirectTo=/dashboard")}
                 type="button"
               >
                 Reset redirect

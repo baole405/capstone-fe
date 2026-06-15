@@ -30,8 +30,8 @@ export default async function AuthErrorPage({
           <p>{content.description}</p>
           <div className="flex flex-wrap gap-3">
             <Button render={<Link href="/login" />}>Back to login</Button>
-            <Button variant="outline" render={<Link href="/admin" />}>
-              Try admin again
+            <Button variant="outline" render={<Link href="/dashboard" />}>
+              Try dashboard again
             </Button>
           </div>
         </CardContent>

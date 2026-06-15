@@ -362,6 +362,7 @@ export function DataTable({
     () => data?.map(({ id }) => id) || [],
     [data],
   );
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
@@ -682,15 +683,10 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   const isMobile = useIsMobile();
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
-      <DrawerTrigger
-        render={
-          <Button
-            variant="link"
-            className="text-foreground w-fit px-0 text-left"
-          />
-        }
-      >
-        {item.header}
+      <DrawerTrigger asChild>
+        <Button variant="link" className="text-foreground w-fit px-0 text-left">
+          {item.header}
+        </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
@@ -867,7 +863,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
         </div>
         <DrawerFooter>
           <Button>Submit</Button>
-          <DrawerClose render={<Button variant="outline" />}></DrawerClose>
+          <DrawerClose asChild>
+            <Button variant="outline">Close</Button>
+          </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
