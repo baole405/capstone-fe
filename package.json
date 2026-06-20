@@ -4,6 +4,7 @@
   "private": true,
   "packageManager": "pnpm@10.15.1",
   "scripts": {
+    "predev": "node scripts/check-backend.mjs",
     "dev": "next dev --turbopack --port 5173",
     "build": "next build",
     "start": "next start --port 5173",
