@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import type { Route } from "next";
 
 import { LoginPanel } from "@/features/auth/components/login-panel";
 import { sanitizeRedirectPath } from "@/features/auth/lib/safe-redirect";
@@ -12,17 +13,18 @@ type LoginPageProps = {
 };
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { redirectTo } = await searchParams;
+  const targetRedirect = sanitizeRedirectPath(redirectTo);
+
   if (appConfig.devBypassAuth) {
-    redirect("/dashboard");
+    redirect(targetRedirect as Route);
   }
 
   const cookieStore = await cookies();
 
   if (cookieStore.has("sid")) {
-    redirect("/dashboard");
+    redirect(targetRedirect as Route);
   }
 
-  const { redirectTo } = await searchParams;
-
-  return <LoginPanel redirectTo={sanitizeRedirectPath(redirectTo)} />;
+  return <LoginPanel redirectTo={targetRedirect} />;
 }
