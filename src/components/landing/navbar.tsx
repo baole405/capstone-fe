@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Sparkles, Menu, ArrowRight } from "lucide-react";
+import { Sparkles, Menu, ArrowRight, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -21,7 +21,7 @@ export function Navbar() {
   const navLinks = [
     { label: "Soi Da AI", href: "#ai-scan" },
     { label: "Cách Hoạt Động", href: "#how-it-works" },
-    { label: "Sản Phẩm", href: "#products" },
+    { label: "Sản Phẩm", href: "/shop" },
     { label: "Mạng Lưới Chuyên Gia", href: "#experts" },
     { label: "Phòng Khám", href: "#clinics" },
   ];
@@ -74,6 +74,12 @@ export function Navbar() {
               <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </a>
+          <Link href="/cart">
+            <Button variant="ghost" size="icon" className="rounded-xl">
+              <ShoppingCart className="h-5 w-5" />
+              <span className="sr-only">Giỏ hàng</span>
+            </Button>
+          </Link>
         </div>
 
         {/* Mobile Navigation (Hamburger) */}
@@ -120,6 +126,11 @@ export function Navbar() {
                   <a href="/login?redirectTo=/scan" className="w-full">
                     <Button className="w-full rounded-xl">Khảo sát ngay</Button>
                   </a>
+                  <Link href="/cart" className="w-full">
+                    <Button variant="outline" className="w-full rounded-xl">
+                      <ShoppingCart className="mr-2 h-4 w-4" /> Giỏ hàng
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </SheetContent>
