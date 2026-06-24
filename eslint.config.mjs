@@ -15,7 +15,18 @@ const eslintConfig = defineConfig([
     "scaffold-app/**",
     ".tmp/**",
     "public/**",
+    // Node.js utility scripts — console output is intentional
+    "scripts/**",
   ]),
+  {
+    rules: {
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;
