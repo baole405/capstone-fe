@@ -6,6 +6,9 @@ import { useState } from "react";
 
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppProvider } from "@/features/app-context/context/app-context";
+import { EcommerceProvider } from "@/features/ecommerce/context/ecommerce-context";
+import { GlowToastProvider } from "@/components/glow/toast";
 
 export function AppProviders({
   children,
@@ -27,10 +30,16 @@ export function AppProviders({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        {children}
-        <Toaster richColors position="top-right" />
-      </TooltipProvider>
+      <AppProvider>
+        <EcommerceProvider>
+          <GlowToastProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster richColors position="top-right" />
+            </TooltipProvider>
+          </GlowToastProvider>
+        </EcommerceProvider>
+      </AppProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
